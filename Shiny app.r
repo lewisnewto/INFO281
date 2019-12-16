@@ -1,18 +1,15 @@
 # INFO281
-
 #shiny template
 library(shiny)
 library(shiny)
 ui <- navbarPage("Income levels of New Zealanders",
-                 tabPanel("Ethnic groups",plotOutput("ethnic_bar"), plotOutput("ethnic_line")),
-                 tabPanel("Age groups"),
-  theme = shinytheme("united"),
-  sliderInput(inputId = "num",
-              label = "Choose a year",
-              value = 2016, min = 2008, max = 2019,
-              format = "####", sep = ""),
-  #plotOutput("ethnic_bar"),
-  plotOutput("ethnic_line")
+                 tabPanel("Ethnic groups", sliderInput(inputId = "num",
+                                                       label = "Choose a year",
+                                                       value = 2016, min = 2008, max = 2019,
+                                                       format = "####", sep = ""),
+                                                      plotOutput("ethnic_bar"), plotOutput("ethnic_line")),
+                 tabPanel("Age groups", plotOutput("age_line")),
+  theme = shinytheme("united")
 )
 server <- function(input, output){
   output$ethnic_line <- renderPlot({
@@ -30,10 +27,29 @@ server <- function(input, output){
     output$ethnic_bar <- renderPlot({
       filter(plot_dat, Year %in% input$num) %>%
         ggplot(data = ., aes(x = factor(ethnic), y = value)) +
-        geom_bar(stat = "identity") 
+        geom_bar(stat = "identity") +
+        xlab(label = "Ethnic groups")+
+        ylab("Average weekly income (NZD)")
       
 
   })
+    output$age_line <- renderPlot({
+      ggplot(age_dat, aes(x = factor(Year), group = 1))+
+        geom_line(aes(y = twenty), color = "blue")+
+        geom_line(aes(y = twentyfive), color = "red")+
+        geom_line(aes(y = thirty), color = "grey")+
+        geom_line(aes(y = thirtyfive), color = "green")+
+        geom_line(aes(y = forty), color = "orange")+
+        geom_line(aes(y = fortyfive), color = "yellow")+
+        geom_line(aes(y = fifty), color = "black")+
+        geom_line(aes(y = fiftyfive), color = "purple")+
+        geom_line(aes(y = sixty), color = "cyan")+
+        geom_line(aes(y = sixtyfive), color = "pink")+
+        xlab(label = "Year")+
+        ylab("Average weekly income (NZD)")+
+        labs(title = 'Income Growth of New Zealand Age Groups') 
+    })
 }
 shinyApp(ui = ui, server = server)
+
 
