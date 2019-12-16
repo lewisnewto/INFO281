@@ -8,7 +8,11 @@ ui <- navbarPage("Income levels of New Zealanders",
                                                        value = 2016, min = 2008, max = 2019,
                                                        format = "####", sep = ""),
                                                       plotOutput("ethnic_bar"), plotOutput("ethnic_line")),
-                 tabPanel("Age groups", plotOutput("age_line")),
+                 tabPanel("Age groups", sliderInput(inputId = "num2",
+                                                    label = "Choose a year",
+                                                    value = 2017, min = 1998, max = 2019,
+                                                    format = "####", sep = ""),
+                                        plotOutput("age_bar"), plotOutput("age_line")),
   theme = shinytheme("united")
 )
 server <- function(input, output){
@@ -23,16 +27,23 @@ server <- function(input, output){
       xlab(label = "year") +
       ylab("Average weekly income (NZD)") +
       labs(title = 'Income Growth of New Zealand Ethnic Groups')
+    
   })  
     output$ethnic_bar <- renderPlot({
       filter(plot_dat, Year %in% input$num) %>%
         ggplot(data = ., aes(x = factor(ethnic), y = value)) +
         geom_bar(stat = "identity") +
-        xlab(label = "Ethnic groups")+
+        xlab(label = "Ethnicity groups")+
         ylab("Average weekly income (NZD)")
       
-
   })
+    output$age_bar <- renderPlot({
+      filter(plot_age, Year %in% input$num2) %>%
+        ggplot(data = ., aes(x = factor(age), y = value)) +
+        geom_bar(stat = "identity") +
+        xlab(label = "Age groups")+
+        ylab("Average weekly income (NZD)")
+    })
     output$age_line <- renderPlot({
       ggplot(age_dat, aes(x = factor(Year), group = 1))+
         geom_line(aes(y = twenty), color = "blue")+
@@ -51,5 +62,4 @@ server <- function(input, output){
     })
 }
 shinyApp(ui = ui, server = server)
-
 
