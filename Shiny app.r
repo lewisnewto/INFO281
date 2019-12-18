@@ -1,7 +1,8 @@
 # INFO281
 #shiny template
 library(shiny)
-library(shiny)
+library(shinythemes)
+
 ui <- navbarPage("Income levels of New Zealanders",
                  tabPanel("Ethnic groups", sliderInput(inputId = "num",
                                                        label = "Choose a year",
